@@ -1,0 +1,16 @@
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+
+# Build products
+build/
+DerivedData/
+
+# Swift Package Manager
+.build/
+
+# macOS
+.DS_Store
+
+#Configuration
+/MovieCatalog/Configuration/Files/*
