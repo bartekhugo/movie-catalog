@@ -30,6 +30,7 @@ struct BackdropCard: View {
                     Text(movie.title)
                         .font(.body)
                         .foregroundColor(.white)
+                        .shadow(radius: 4)
                         .padding(16)
                 }
             }

@@ -15,13 +15,32 @@ struct CatalogView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                ForEach(viewModel.sections) { section in
-                    MovieSectionView(
-                        section: section,
-                        cardProvider: DefaultMovieCardViewProvider()
-                    )
+        ZStack {
+            if viewModel.isLoading {
+                progressView
+            }
+            else if let error = viewModel.errorMessage {
+                noContentView(title: "Unable to Load Movies",
+                              message:"""
+                                        We couldn’t fetch the movie catalog right now. 
+                                        Please check your internet connection and try again.
+                                        Error: \(error)
+                                        """)
+            }
+            else if viewModel.sections.allSatisfy({ $0.viewModel.movies.isEmpty }) {
+                noContentView(title: "No Movies",
+                              message: "There are no movies available right now.")
+            }
+            else {
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        ForEach(viewModel.sections.filter { !$0.viewModel.movies.isEmpty } ) { section in
+                            MovieSectionView(
+                                section: section,
+                                cardProvider: DefaultMovieCardViewProvider()
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -29,8 +48,42 @@ struct CatalogView: View {
             await viewModel.load()
         }
     }
+    
+    private var progressView: some View {
+        VStack(spacing: 32) {
+            ProgressView()
+                .progressViewStyle(.circular)
+                .scaleEffect(1.5)
+            
+            Text("Loading Movies…")
+                .font(.title3)
+                .fontWeight(.semibold)
+        }
+    }
+    
+    private func noContentView(title: String, message: String) -> some View {
+        ContentUnavailableView {
+            Label(title, systemImage: "movieclapper")
+        } description: {
+            Text(message)
+        } actions: {
+            Button { Task { await viewModel.load()}
+            } label: {
+                Label("Retry", systemImage: "arrow.clockwise")
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
 }
 
-#Preview {
+#Preview("Content") {
     CatalogView(viewModel: CatalogViewModel(sectionProvider: CatalogSectionsProvider(tmdb: DIContainer().tmdbService)))
+}
+
+#Preview("Empty") {
+    CatalogView(viewModel: .empty)
+}
+
+#Preview("Error") {
+    CatalogView(viewModel: .error)
 }

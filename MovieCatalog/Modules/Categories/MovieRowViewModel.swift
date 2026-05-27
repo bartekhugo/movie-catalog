@@ -11,9 +11,9 @@ import Observation
 @MainActor
 @Observable
 final class MovieRowViewModel {
-    var movies: [Movie] = []
-    var isLoading = false
-    var errorMessage: String? = nil
+    private(set) var movies: [Movie] = []
+    private(set) var isLoading = false
+    private(set) var errorMessage: String? = nil
 
     private var currentPage = 1
     private var canLoadMore = true
