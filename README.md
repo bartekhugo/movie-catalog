@@ -1,5 +1,7 @@
 # Movie Catalog (tvOS)
 
+![Alt text](screenshot.png)
+
 A simple Apple TV (tvOS) application that connects to the TMDB API and presents a catalog of movies.
 for Interview purposes
 
