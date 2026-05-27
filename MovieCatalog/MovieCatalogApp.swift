@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct MovieCatalogApp: App {
+    @State private var dependencies = DIContainer()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainFlow(dependencies: dependencies)
         }
     }
 }
