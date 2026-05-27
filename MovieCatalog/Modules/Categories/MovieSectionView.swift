@@ -17,14 +17,19 @@ struct MovieSectionView<CardProvider: MovieCardViewProviding>: View {
             if let error = section.viewModel.errorMessage {
                 InlineErrorView(message: error) { Task { await section.viewModel.loadMore() } }
             }
-            
-            HorizontalCarouselView(
-                items: section.viewModel.movies,
-                isLoading: section.viewModel.isLoading,
-                placeholder: { cardProvider.makePlacehoder(for: section.style) },
-                onReachEnd: { await section.viewModel.loadMore() }
-            ) { movie in
-                cardProvider.makeView(for: movie, style: section.style)
+            else if section.viewModel.movies.isEmpty
+                        && section.viewModel.isLoading == false {
+                InlineErrorView(message: "No results") { Task { await section.viewModel.loadMore() } }
+            }
+            else  {
+                HorizontalCarouselView(
+                    items: section.viewModel.movies,
+                    isLoading: section.viewModel.isLoading,
+                    placeholder: { cardProvider.makePlacehoder(for: section.style) },
+                    onReachEnd: { await section.viewModel.loadMore() }
+                ) { movie in
+                    cardProvider.makeView(for: movie, style: section.style)
+                }
             }
         }
     }
